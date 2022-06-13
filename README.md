@@ -2,10 +2,7 @@
 
 [Topic](https://www.zabbix.com/forum/showthread.php?t=41439) on zabbix forum
 
-## LSI_RAID_valuemaps
-Zabbix value mappings for "Template LSI RAID". Should be imported before template via "Administration" -> "General" -> "Value mapping" -> "Import".
-
-### Available items:
+### Value maps:
 **LSI RAID BBU & LD Status**
 - 0 -> Optimal
 - 1 -> Failed
@@ -87,5 +84,7 @@ Adapt the paths in `raid_trapper_checks_task.xml` to your needs and import it in
 
     # crontab -e -u zabbix
     * */5 * * * perl /path/to/your/raid_trapper_check.pl
+    # discovery for new disk once a day
+    * 22 * * * perl /path/to/your/raid_discovery.pl
 
 I'm not a programmer, so code review will be appreciated :)
