@@ -13,7 +13,7 @@ my %battery_units   = ();
 my %physical_drives = ();
 my %virtual_drives  = ();
 
-my $adp_count   = `$cli -AdpCount -NoLog`;
+my $adp_count   = `sudo $cli -AdpCount -NoLog`;
 # Controller Count: 1.
 if ($adp_count =~ m/.*Controller\sCount:\s(\d)\.*/i) {
     $adp_count = $1;
