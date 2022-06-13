@@ -82,7 +82,7 @@ Adapt the paths in `raid_trapper_checks_task.xml` to your needs and import it in
 
 ### Linux/Unix
 
-    # crontab -e -u zabbix
+    # crontab -e
     * */5 * * * perl /path/to/your/raid_trapper_check.pl
     # discovery for new disk once a day
     * 22 * * * perl /path/to/your/raid_discovery.pl
