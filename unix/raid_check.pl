@@ -16,7 +16,7 @@ GetOptions (
     "vdisk:i"       => \$vdisk_id
 ) or die("Error in command line arguments\n");
 
-my $cli = '/usr/bin/sudo /opt/MegaRAID/CmdTool2/CmdTool2';
+my $cli = '/usr/bin/sudo /usr/local/bin/MegaCli';
 
 die("Mode is not defined. Use --mode paramater") if !defined $mode;
 die("Adapter is not defined. Use --adapter paramater") if !defined $adapter;
@@ -50,10 +50,13 @@ sub pdisk_item() {
     }
 
     my @cli_output = `$cli -pdinfo -PhysDrv[$enclosure_id:$disk_id] -a $adapter -NoLog`;
-
     foreach my $line (@cli_output) {
         if ($line =~ $regex) {
             $output = $1;
+            if ($item eq 'raw_size'){
+                $output =~ s/ GB//g;
+                $output *= 1000 * 1000 * 1000;
+            }
             $item_found=1;
             last;
         }
@@ -90,10 +93,13 @@ sub vdisk_item() {
     }
 
     my @cli_output = `$cli -LDinfo -L $vd -a $adapter -NoLog`;
-
     foreach my $line (@cli_output) {
         if ($line =~ $regex) {
             $output = $1;
+            if ($item eq 'vd_size'){
+                $output =~ s/( GB)//g;
+                $output *= 1000 * 1000 * 1000;
+            }
             $item_found = 1;
             last;
         }

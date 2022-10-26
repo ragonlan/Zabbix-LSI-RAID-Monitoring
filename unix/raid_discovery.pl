@@ -2,9 +2,22 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
 
-my $cli             = '/opt/MegaRAID/MegaCli/MegaCli64';
-my $zabbix_config   = '/etc/zabbix_agentd.conf';
+my ($print, $sudo, $item);
+
+GetOptions (
+    "item=s"       => \$item,
+    "print"        => \$print,
+    "sudo"         => \$sudo,
+);
+
+#my $cli             = '/opt/MegaRAID/MegaCli/MegaCli64';
+my $cli             = '/usr/local/bin/MegaCli';
+if ($sudo) {
+    $cli = "/usr/bin/sudo ". $cli;
+}
+my $zabbix_config   = '/etc/zabbix/zabbix_agent2.conf';
 my $zabbix_sender   = '/usr/bin/zabbix_sender';
 my $tmp_path        = '/tmp/raid-discovery-zsend-data.tmp';
 my %enclosures      = ();
@@ -13,7 +26,7 @@ my %battery_units   = ();
 my %physical_drives = ();
 my %virtual_drives  = ();
 
-my $adp_count   = `sudo $cli -AdpCount -NoLog`;
+my $adp_count   = `$cli -AdpCount -NoLog`;
 # Controller Count: 1.
 if ($adp_count =~ m/.*Controller\sCount:\s(\d)\.*/i) {
     $adp_count = $1;
@@ -34,7 +47,6 @@ for (my $adapter = 0; $adapter < $adp_count; $adapter++) {
             $adapters{$adapter} = "{ \"{#ADAPTER_ID}\":\"$adapter\" }";
         }
     }
-
     my $number_of_lds = `$cli -LDGetNum -a $adapter -NoLog`;
     # Number of Virtual Drives Configured on Adapter 0: 3
     if ($number_of_lds=~ m/.*Number\sof\sVirtual\sDrives\sConfigured\son\sAdapter\s$adapter:\s(\d+)/) {
@@ -54,7 +66,6 @@ for (my $adapter = 0; $adapter < $adp_count; $adapter++) {
             }
         }
     }
-
     my $bbu_info = `$cli -AdpBbuCmd -GetBbuStatus -a $adapter -NoLog`;
     if (!($bbu_info =~ m/.*Get BBU Status Failed.*/)) {
         $battery_units{$adapter} = "{ \"{#ADAPTER_ID}\":\"$adapter\" }";
@@ -135,6 +146,16 @@ if (($phd_count != 0) && ($lds_count != 0)) {
     }
 }
 close (ZSEND_FILE) or die "Can't close $tmp_path: $!";
-
-my @cmd_args = ($zabbix_sender,'-c',$zabbix_config,'-i',$tmp_path);
-system(@cmd_args);
+if ($print){
+    open (FH, "<$tmp_path") or die "Can't open $tmp_path: $!";
+    while (my $line = <FH>) {
+         if ($item and $line =~ /^- hw\.raid\.discovery\.$item (.*)/) {
+             print ("$1\n");
+         }
+    }
+    close(FH) or die "Can't close $tmp_path: $!";
+}
+else {
+    my @cmd_args = ($zabbix_sender,'-c',$zabbix_config,'-i',$tmp_path);
+    system(@cmd_args);
+}

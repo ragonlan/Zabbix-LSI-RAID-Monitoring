@@ -1,0 +1,353 @@
+{
+    "zabbix_export": {
+        "version": "6.0",
+        "date": "2022-10-26T12:18:15Z",
+        "groups": [
+            {
+                "uuid": "7df96b18c230490a9a0a9e2307226338",
+                "name": "Templates"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "6a5f57eaa3bc4041b7dedd87defbd38e",
+                "template": "Template LSI RAID",
+                "name": "Template LSI RAID (agent)",
+                "groups": [
+                    {
+                        "name": "Templates"
+                    }
+                ],
+                "discovery_rules": [
+                    {
+                        "uuid": "1414c486fe36428aae5fa2a50d9a5efd",
+                        "name": "RAID discovery adapters",
+                        "key": "hw.raid.discovery.adapters",
+                        "delay": "6h",
+                        "item_prototypes": [
+                            {
+                                "uuid": "488ad62ac49d424ead936f5d3266cce8",
+                                "name": "Adapter {#ADAPTER_ID} firmware",
+                                "key": "hw.raid.adapter[{#ADAPTER_ID},\"fw_version\"]",
+                                "delay": "1d",
+                                "history": "7d",
+                                "trends": "0",
+                                "value_type": "CHAR",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID adapter"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "4d23e9edd40d40f7b82264818124109b",
+                                "name": "Adapter {#ADAPTER_ID} model",
+                                "key": "hw.raid.adapter[{#ADAPTER_ID},\"product_name\"]",
+                                "delay": "1d",
+                                "history": "7d",
+                                "trends": "0",
+                                "value_type": "CHAR",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID adapter"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "eb70286ed6d74df9ba91a98824caad06",
+                        "name": "RAID discovery bbu",
+                        "key": "hw.raid.discovery.bbu",
+                        "delay": "1d",
+                        "item_prototypes": [
+                            {
+                                "uuid": "ca38da6751854290bc8bdc871a76fae5",
+                                "name": "BBU state on adapter:{#ADAPTER_ID}",
+                                "key": "hw.raid.bbu[{#ADAPTER_ID},\"bbu_state\"]",
+                                "delay": "5m",
+                                "history": "7d",
+                                "valuemap": {
+                                    "name": "LSI RAID BBU &amp; LD Status"
+                                },
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID BBU"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "e1e2bdd4760346b3b5338781f473f6e2",
+                                        "expression": "last(/Template LSI RAID/hw.raid.bbu[{#ADAPTER_ID},\"bbu_state\"])=1",
+                                        "name": "BBU is not in optimal state on adapter:{#ADAPTER_ID}",
+                                        "priority": "HIGH",
+                                        "description": "Backup Battery Unit on RAID adapter is not in operational state. RAID volumes performance can be degraded"
+                                    },
+                                    {
+                                        "uuid": "696ebe8794e14de7ae8ae69c5ffc6301",
+                                        "expression": "nodata(/Template LSI RAID/hw.raid.bbu[{#ADAPTER_ID},\"bbu_state\"],720s)=1",
+                                        "name": "RAID info is outdated on {HOST.NAME}",
+                                        "priority": "DISASTER",
+                                        "description": "RAID INFO not updated more than 10 minutes. Check task scheduler on host and connectivity"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "e9dbcd4b7f9e4299985488a7b53f0b33",
+                                "name": "BBU on adapter {#ADAPTER_ID}:manufacture date",
+                                "key": "hw.raid.bbu[{#ADAPTER_ID},\"date_manufactured\"]",
+                                "delay": "1d",
+                                "history": "7d",
+                                "trends": "0",
+                                "status": "DISABLED",
+                                "value_type": "CHAR",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID BBU"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "0937b02d389b47dca9a154a36cd93c92",
+                                "name": "BBU design capacity on adapter:{#ADAPTER_ID}",
+                                "key": "hw.raid.bbu[{#ADAPTER_ID},\"design_capacity\"]",
+                                "delay": "1d",
+                                "history": "1d",
+                                "status": "DISABLED",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID BBU"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "cf267e7bacbc45b5830e1a0c35eb1c56",
+                                "name": "BBU current capacity on adapter:{#ADAPTER_ID}",
+                                "key": "hw.raid.bbu[{#ADAPTER_ID},\"full_capacity\"]",
+                                "delay": "15m",
+                                "history": "7d",
+                                "status": "DISABLED",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID BBU"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "a4745a0c94e748e791c6ab316123648f",
+                                "name": "BBU state of charge on adapter:{#ADAPTER_ID}",
+                                "key": "hw.raid.bbu[{#ADAPTER_ID},\"state_of_charge\"]",
+                                "delay": "5m",
+                                "history": "7d",
+                                "units": "%",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID BBU"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "e638200938f94f4894aed8dea6017e12",
+                                        "expression": "avg(/Template LSI RAID/hw.raid.bbu[{#ADAPTER_ID},\"state_of_charge\"],#3)<55",
+                                        "name": "BBU on adapter:{#ADAPTER_ID} charge capacity degraded",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "250fbfab47434d2e8dd8cfb5bc9aa294",
+                        "name": "RAID discovery pdisks",
+                        "key": "hw.raid.discovery.pdisks",
+                        "delay": "1h",
+                        "item_prototypes": [
+                            {
+                                "uuid": "40d9f77361af4de8b31a48e2d9eb18f3",
+                                "name": "Disk state Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                "key": "hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"firmware_state\"]",
+                                "units": "B",
+                                "valuemap": {
+                                    "name": "LSI RAID PhysDrv Status"
+                                },
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Physical Volume"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "962cc00f8cc54ad393a148410e1d10d7",
+                                        "expression": "last(/Template LSI RAID/hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"firmware_state\"])=1",
+                                        "name": "Disk state Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID} is not Optimal",
+                                        "priority": "HIGH"
+                                    },
+                                    {
+                                        "uuid": "c95a06371375473f9191d47da0f5104f",
+                                        "expression": "last(/Template LSI RAID/hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"firmware_state\"])=2",
+                                        "name": "Disk state Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID} is Rebuild",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "c610d2fcf98443e780296a216578fa35",
+                                "name": "Disk model Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                "key": "hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"inquiry_data\"]",
+                                "delay": "1d",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Physical Volume"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "65471053ecac455fb1922b010537744e",
+                                "name": "Disk Media errors Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                "key": "hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"media_errors\"]",
+                                "delay": "5m",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Physical Volume"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "345df6f34fef4d1b9a327aaaddb26158",
+                                        "expression": "last(/Template LSI RAID/hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"media_errors\"])<>0",
+                                        "name": "Disk have media errors Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "151adbbb9945419fb746fdb6f25a2090",
+                                "name": "Disk predictive errors Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                "key": "hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"predictive_errors\"]",
+                                "delay": "5m",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Physical Volume"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "fcfa8492af8b425bb6f2b25a2f06a6bf",
+                                        "expression": "last(/Template LSI RAID/hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"predictive_errors\"])<>0",
+                                        "name": "Disk have predictive errors Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "2de9ed0e3048480bacc55e572e9b235e",
+                                "name": "Disk size Adapter:{#ADAPTER_ID},ENC:{#ENCLOSURE_ID},Disk:{#PDRIVE_ID}",
+                                "key": "hw.raid.physical_disk[{#ADAPTER_ID},{#ENCLOSURE_ID},{#PDRIVE_ID},\"raw_size\"]",
+                                "delay": "6h",
+                                "value_type": "FLOAT",
+                                "units": "B",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Physical Volume"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "2aaff77ea3cf4f078a81e2ea8bb85f42",
+                        "name": "RAID discovery vdisks",
+                        "key": "hw.raid.discovery.vdisks",
+                        "delay": "1h",
+                        "item_prototypes": [
+                            {
+                                "uuid": "4ca547b6f8f74631adada8e4ec160db9",
+                                "name": "RAID Volume size Adapter:{#ADAPTER_ID},ID:{#VDRIVE_ID}",
+                                "key": "hw.raid.logical_disk[{#ADAPTER_ID},{#VDRIVE_ID},\"vd_size\"]",
+                                "delay": "6h",
+                                "value_type": "FLOAT",
+                                "units": "B",
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Logical Volume"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "c5b1520d494244c1badb3d1928c7c568",
+                                "name": "RAID Volume state Adapter:{#ADAPTER_ID},ID:{#VDRIVE_ID}",
+                                "key": "hw.raid.logical_disk[{#ADAPTER_ID},{#VDRIVE_ID},\"vd_state\"]",
+                                "valuemap": {
+                                    "name": "LSI RAID BBU &amp; LD Status"
+                                },
+                                "tags": [
+                                    {
+                                        "tag": "application",
+                                        "value": "LSI RAID Logical Volume"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "6d1c81494297400c8be97dd803b2dcc4",
+                                        "expression": "last(/Template LSI RAID/hw.raid.logical_disk[{#ADAPTER_ID},{#VDRIVE_ID},\"vd_state\"])=1",
+                                        "name": "RAID Volume Adapter:{#ADAPTER_ID},ID:{#VDRIVE_ID} state is not Optimal",
+                                        "priority": "HIGH"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "valuemaps": [
+                    {
+                        "uuid": "22cb2e8c06714194958ed723ea350413",
+                        "name": "LSI RAID BBU &amp; LD Status",
+                        "mappings": [
+                            {
+                                "value": "0",
+                                "newvalue": "Optimal"
+                            },
+                            {
+                                "value": "1",
+                                "newvalue": "Failed"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "5dd39b5da76145f6899c528869939089",
+                        "name": "LSI RAID PhysDrv Status",
+                        "mappings": [
+                            {
+                                "value": "0",
+                                "newvalue": "(Online|Hostpare|Unconfigured good)"
+                            },
+                            {
+                                "value": "1",
+                                "newvalue": "Failed"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "Rebuild"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
