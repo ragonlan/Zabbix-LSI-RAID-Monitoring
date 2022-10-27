@@ -73,7 +73,9 @@ for (my $adapter = 0; $adapter < $adp_count; $adapter++) {
 
     my @pd_list = `$cli -pdlist -a $adapter -NoLog`;
     my $check_next_line = 0;
+    my $position = 'None';
     my $enclosure_id    = -1;
+    my $slot = -1;
     # Determine Slot Number for each drive on current enclosure
     foreach my $line (@pd_list) {
         if ($line =~ m/^Enclosure\sDevice\sID:\s(\d+)$/) {
@@ -83,9 +85,18 @@ for (my $adapter = 0; $adapter < $adp_count; $adapter++) {
             # This can happen, if embedded raid controller is in use, there are drives and logical disks, but no enclosures
             $enclosure_id       = 2989; # 0xBAD, :( magic hack
             $check_next_line    = 1;
+        } elsif ($line =~ m/^\s*Drive's\sposition:\s(.*)$/) {
+            $position           = $1;
+            $check_next_line    = 1;
         } elsif (($line =~ m/^Slot\sNumber:\s(\d+)$/) && $check_next_line) {
-            $physical_drives{"$adapter$enclosure_id$1"} = "{ \"{#ENCLOSURE_ID}\":\"$enclosure_id\", \"{#PDRIVE_ID}\":\"$1\", \"{#ADAPTER_ID}\":\"$adapter\" }";
+            $slot = $1;
+        } elsif ($line =~ m/^Drive\shas\sflagged/) {
+            $physical_drives{"$adapter$enclosure_id$slot"} = "{ \"{#ENCLOSURE_ID}\":\"$enclosure_id\", \"{#PDRIVE_ID}\":\"$slot\", \"{#ADAPTER_ID}\":\"$adapter\", \"{#PD_POSITION}\":\"$position\" }";
             $check_next_line    = 0;
+            $check_next_line = 0;
+            $position = 'None';
+            $enclosure_id    = -1;
+            $slot = -1;
         } else {
             next;
         }
